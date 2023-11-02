@@ -12,6 +12,7 @@ public class AttackCommand : ICommand
         this.entity = entity;
         this.target = target;
     }
+    public GameObject Target { get; }
     public void Execute()
     {
         

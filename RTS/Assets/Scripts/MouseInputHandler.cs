@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MouseInputHandler : MonoBehaviour
@@ -6,17 +7,17 @@ public class MouseInputHandler : MonoBehaviour
     [SerializeField] private GameObject selectedEntity;
     // public Transform enemyTransform;
     private ICommand currentCommand = null;
-    public enum ActionType
+    public List<ActionTypes.ActionCommandPair> actionCommandPairs;
+    private Dictionary<GameObject, ActionTypes.ActionCommandPair> actionDictionary;
+    private void Start()
     {
-        Move,
-        Attack
+        actionDictionary = new Dictionary<GameObject, ActionTypes.ActionCommandPair>();
+        foreach (var pair in actionCommandPairs)
+        {
+            actionDictionary.Add(pair.command.Target, pair);
+        }
     }
-    [Serializable]
-    public struct ActionCommandPair
-    {
-        public ActionType actionType;
-        public ICommand command;
-    }
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -51,9 +52,9 @@ public class MouseInputHandler : MonoBehaviour
         {
             currentCommand.Cancel();
         }
-        if (hit.transform.CompareTag("EnemyEntity"))
+        if (actionDictionary.TryGetValue(hit.transform.gameObject, out ActionTypes.ActionCommandPair actionCommandPair))
         {
-            currentCommand = new AttackCommand(selectedEntity, hit.transform.gameObject);
+            currentCommand = actionCommandPair.command;
         }
         else
         {

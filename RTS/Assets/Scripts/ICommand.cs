@@ -7,5 +7,6 @@ public interface ICommand
 {
     void Execute();
     void Cancel();
+    GameObject Target { get; }
 
 }

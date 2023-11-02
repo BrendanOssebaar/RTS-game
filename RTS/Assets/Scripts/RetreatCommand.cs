@@ -8,7 +8,7 @@ public class RetreatCommand : ICommand
     {
         Debug.Log("Make the units retreat");
     }
-
+    public GameObject Target { get; }
     public void Cancel()
     {
         

@@ -1,0 +1,48 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using Unity.VisualScripting.Dependencies.Sqlite;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+
+public class MoveCommand : ICommand
+{
+    private GameObject entity;
+    private Vector3 destination;
+    private float speed = 5f;
+    private Coroutine moveCoroutine;
+    public MoveCommand(GameObject entity, Vector3 destination)
+    {
+        this.entity = entity;
+        this.destination = destination;
+    }
+    public void Execute()
+    {
+       moveCoroutine = entity.GetComponent<MonoBehaviour>().StartCoroutine(MoveToDestination());
+    }
+
+    IEnumerator MoveToDestination()
+    {
+        while (Vector3.Distance(entity.transform.position , destination)>0.1f)
+        {
+            Vector3 direction = (destination - entity.transform.position).normalized;
+            entity.transform.position += direction * speed * Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public void Cancel()
+    {
+        if (moveCoroutine != null)
+        {
+            entity.GetComponent<MonoBehaviour>().StopCoroutine(moveCoroutine);
+        }
+
+        if (Input.GetKeyDown("s"))
+        {
+            entity.GetComponent<MonoBehaviour>().StopCoroutine(moveCoroutine);
+        }
+    }
+}
+// transform.position = Vector3.MoveTowards(entity.transform.position, destination, speed * Time.deltaTime);

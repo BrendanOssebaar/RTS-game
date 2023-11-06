@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MouseInputHandler : MonoBehaviour
 {
     [SerializeField] private GameObject selectedEntity;
     // public Transform enemyTransform;
-    private ICommand currentCommand = null;
+    [SerializeField] private Unit unit;
+    private Command currentCommand = null;
     public List<ActionTypes.ActionCommandPair> actionCommandPairs;
     private Dictionary<GameObject, ActionTypes.ActionCommandPair> actionDictionary;
     private void Start()
@@ -14,7 +16,7 @@ public class MouseInputHandler : MonoBehaviour
         actionDictionary = new Dictionary<GameObject, ActionTypes.ActionCommandPair>();
         foreach (var pair in actionCommandPairs)
         {
-            actionDictionary.Add(pair.command.Target, pair);
+            actionDictionary.Add(pair.Command.Target, pair);
         }
     }
 
@@ -36,9 +38,10 @@ public class MouseInputHandler : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (!Physics.Raycast(ray, out hit)) return;
-        if (hit.transform.CompareTag("SelectableEntity"))
+        Unit unit = hit.collider.GetComponent<Unit>();
+        if (unit != null)
         {
-            selectedEntity = hit.transform.gameObject;
+            selectedEntity = unit.gameObject;
             Debug.Log("Entity Selected: " + hit.transform.name);
         }
     }
@@ -54,13 +57,15 @@ public class MouseInputHandler : MonoBehaviour
         }
         if (actionDictionary.TryGetValue(hit.transform.gameObject, out ActionTypes.ActionCommandPair actionCommandPair))
         {
-            currentCommand = actionCommandPair.command;
+            currentCommand = actionCommandPair.Command;
         }
         else
         {
             currentCommand = new MoveCommand(selectedEntity, hit.point);
         }
         currentCommand.Execute();
+        unit.EnqueueCommand(currentCommand);
+        print(MoveCommand.destination);
     }
     //
     // private Vector3 getWorldPositionFromMouse()

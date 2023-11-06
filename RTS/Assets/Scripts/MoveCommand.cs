@@ -6,20 +6,32 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 
-public class MoveCommand : ICommand
+public class MoveCommand : Command
 {
-    private Vector3 destination;
+    public static Vector3 destination;
     private float speed = 5f;
     private Coroutine moveCoroutine;
     public MoveCommand(GameObject entity, Vector3 destination)
     {
         this.Target = entity;
-        this.destination = destination;
+        MoveCommand.destination = destination;
     }
 
     public GameObject Target { get; }
 
-    public void Execute()
+    public override bool IsCompleted()
+    {
+        if (Vector3.Distance(destination, Target.transform.position) < 0.1f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public override void Execute()
     {
        moveCoroutine = Target.GetComponent<MonoBehaviour>().StartCoroutine(MoveToDestination());
     }
@@ -34,7 +46,7 @@ public class MoveCommand : ICommand
         }
     }
 
-    public void Cancel()
+    public override void Cancel()
     {
         if (moveCoroutine != null)
         {

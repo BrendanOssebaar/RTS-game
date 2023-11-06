@@ -16,10 +16,10 @@ class UnitManager : MonoBehaviour
 
     void Update()
     {
-        if (_unit._commands.Count > 0)
-        {
-            _unit.ExecuteCommands();
-        }
+        // if (_unit._commands.Count > 0)
+        // {
+        //     _unit.ExecuteCommands();
+        // }
 
         // if (Input.GetMouseButtonDown(1))
         // {

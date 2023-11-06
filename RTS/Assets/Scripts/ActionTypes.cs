@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,10 +10,11 @@ public class ActionTypes : MonoBehaviour
         Move,
         Attack
     }
-    [System.Serializable]
+    [Serializable]
     public struct ActionCommandPair
     {
         public ActionType actionType;
-        public ICommand command;
+        public Command Command;
+        
     }
 }

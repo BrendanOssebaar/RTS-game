@@ -3,20 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit
+public class Unit : MonoBehaviour
 {
-    public Queue<ICommand> _commands = new Queue<ICommand>();
+    private Queue<Command> _commands = new Queue<Command>();
 
-    public void EnqueueCommand(ICommand command)
+    public void EnqueueCommand(Command command)
     {
         _commands.Enqueue(command);
     }
     public void ExecuteCommands()
     {
-        while (_commands.Count >0)
+        if (_commands.Count >0)
         {
-            ICommand command = _commands.Dequeue();
-            command.Execute();
+            Command command = _commands.Peek();
+            if (command.IsCompleted())
+            {
+                _commands.Dequeue();
+            }
+            else
+            {
+                command.Execute();    
+            }
         }
     }
+
+    
 }

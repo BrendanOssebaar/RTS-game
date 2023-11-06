@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackCommand : ICommand
+public class AttackCommand : Command
 {
     private GameObject entity;
     private GameObject target;
@@ -13,13 +13,18 @@ public class AttackCommand : ICommand
         this.target = target;
     }
     public GameObject Target { get; }
-    public void Execute()
+    public override void Execute()
     {
         
     }
 
-    public void Cancel()
+    public override void Cancel()
     {
         
+    }
+
+    public override bool IsCompleted()
+    {
+        return true;
     }
 }

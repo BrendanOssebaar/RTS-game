@@ -360,9 +360,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedEntity: {fileID: 0}
-  actionCommandPairs:
-  - actionType: 0
-  - actionType: 1
 --- !u!1 &1214018609
 GameObject:
   m_ObjectHideFlags: 0

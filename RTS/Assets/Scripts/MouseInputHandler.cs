@@ -5,81 +5,72 @@ using UnityEngine.UI;
 
 public class MouseInputHandler : MonoBehaviour
 {
-    [SerializeField] private GameObject selectedEntity;
-    // public Transform enemyTransform;
-    [SerializeField] private Unit unit;
-    private Command currentCommand = null;
-    public List<ActionTypes.ActionCommandPair> actionCommandPairs;
-    private Dictionary<GameObject, ActionTypes.ActionCommandPair> actionDictionary;
-    private void Start()
+    [SerializeField] private Commander commander;
+    private Unit _selectedUnit;
+
+    private RaycastHit? CalculateRaycast()
     {
-        actionDictionary = new Dictionary<GameObject, ActionTypes.ActionCommandPair>();
-        foreach (var pair in actionCommandPairs)
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
         {
-            actionDictionary.Add(pair.Command.Target, pair);
+            // _selectedUnit = hit.collider.GetComponent<Unit>();
+            // if (_selectedUnit != null)
+            // {
+                return hit;
+            // }
         }
+
+        return null;
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-           SelectEntity();
+            var hitInfo = CalculateRaycast();
+            if (hitInfo.HasValue)
+            {
+                commander.SelectEntity(hitInfo.Value.collider.gameObject);
+            }
         }
-
-        else if (Input.GetMouseButtonDown(1) && selectedEntity != null)
+        if (Input.GetMouseButtonDown(1))
         {
-            IssueCommand();
+            Debug.Log("Right-click detected");
+            var hitInfo = CalculateRaycast();
+            if (hitInfo.HasValue)
+            {
+                Debug.Log($"Issuing command to position {hitInfo.Value.point}");
+                IssueCommandToSelectedUnit(hitInfo.Value.point);   
+            }
         }
     }
 
-    void SelectEntity()
+    private void IssueCommandToSelectedUnit(Vector3 destination)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (!Physics.Raycast(ray, out hit)) return;
-        Unit unit = hit.collider.GetComponent<Unit>();
-        if (unit != null)
+        if (_selectedUnit != null)
         {
-            selectedEntity = unit.gameObject;
-            Debug.Log("Entity Selected: " + hit.transform.name);
+            commander.IssueCommand(_selectedUnit,destination);
         }
     }
 
-    void IssueCommand()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (!Physics.Raycast(ray, out hit)) return;
-        if (currentCommand != null)
-        {
-            currentCommand.Cancel();
-        }
-        if (actionDictionary.TryGetValue(hit.transform.gameObject, out ActionTypes.ActionCommandPair actionCommandPair))
-        {
-            currentCommand = actionCommandPair.Command;
-        }
-        else
-        {
-            currentCommand = new MoveCommand(selectedEntity, hit.point);
-        }
-        currentCommand.Execute();
-        unit.EnqueueCommand(currentCommand);
-        print(MoveCommand.destination);
-    }
-    //
-    // private Vector3 getWorldPositionFromMouse()
+    // void SelectEntity()
     // {
     //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //     RaycastHit hit;
-    //     if (Physics.Raycast(ray, out hit))
+    //     if (!Physics.Raycast(ray, out var hit)) return;
+    //     _selectedUnit = hit.collider.GetComponent<Unit>();
+    //     if (_selectedUnit != null)
     //     {
-    //         if (hit.transform.CompareTag("SelectableEntity"))
-    //         {
-    //             Debug.Log("Entity Selected:" + hit.transform.name);
-    //         }
-    //         // return hit.point;
+    //         commander.SelectEntity(hit.collider.gameObject);
     //     }
-    //     // return Vector3.zero;
+    //     // Debug.Log("Entity Selected: " + hit.transform.name);
+    // }
+
+    // void IssueCommand()
+    // {
+    //     commander.IssueCommand(_selectedUnit, hit.point);
+    //     // print(MoveCommand.destination);
     // }
 }
+
+    

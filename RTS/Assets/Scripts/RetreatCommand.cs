@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class RetreatCommand : Command
 {
-    public override void Execute()
+    private bool isCompleted;
+    public override bool Execute(GameObject entity)
     {
         Debug.Log("Make the units retreat");
+        return isCompleted;
     }
     public GameObject Target { get; }
     public override void Cancel()
@@ -16,6 +18,6 @@ public class RetreatCommand : Command
 
     public override bool IsCompleted()
     {
-        return true;
+        return isCompleted;
     }
 }

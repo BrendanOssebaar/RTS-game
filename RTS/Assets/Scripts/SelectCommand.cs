@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SelectCommand : Command
 {
+    private bool isCompleted;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,9 +17,10 @@ public class SelectCommand : Command
         
     }
 
-    public override void Execute()
+    public override bool Execute(GameObject entity)
     {
         SelectEntity();
+        return isCompleted;
     }
 
     public override void Cancel()
@@ -28,7 +30,7 @@ public class SelectCommand : Command
 
     public override bool IsCompleted()
     {
-        return true;
+        return isCompleted;
     }
     void SelectEntity()
     {

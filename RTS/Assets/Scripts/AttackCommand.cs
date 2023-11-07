@@ -6,6 +6,7 @@ public class AttackCommand : Command
 {
     private GameObject entity;
     private GameObject target;
+    private bool isCompleted;
 
     public AttackCommand(GameObject entity, GameObject target)
     {
@@ -13,9 +14,9 @@ public class AttackCommand : Command
         this.target = target;
     }
     public GameObject Target { get; }
-    public override void Execute()
+    public override bool Execute(GameObject Entity)
     {
-        
+        return isCompleted;
     }
 
     public override void Cancel()
@@ -25,6 +26,6 @@ public class AttackCommand : Command
 
     public override bool IsCompleted()
     {
-        return true;
+        return isCompleted;
     }
 }

@@ -5,27 +5,70 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    private Queue<Command> _commands = new Queue<Command>();
+    private readonly Queue<Command> _commandQueue = new Queue<Command>();
 
-    public void EnqueueCommand(Command command)
+    public void ExecuteCommand(Command command)
     {
-        _commands.Enqueue(command);
-    }
-    public void ExecuteCommands()
-    {
-        if (_commands.Count >0)
+        if (_commandQueue.Count > 0)
         {
-            Command command = _commands.Peek();
-            if (command.IsCompleted())
+            Command currentCommand = _commandQueue.Peek();
+            if (!currentCommand.IsCompleted())
             {
-                _commands.Dequeue();
+                currentCommand.Cancel();
             }
-            else
+        }
+        _commandQueue.Enqueue(command);
+        StartCoroutine(ExecuteCommands());
+    }
+    private IEnumerator ExecuteCommands()
+    {
+        while (_commandQueue.Count > 0)
+        {
+            Command command = _commandQueue.Peek();
+
+            command.Execute(gameObject);
+
+            while (!command.IsCompleted())
             {
-                command.Execute();    
+                yield return null;
+            }
+
+            // Command completed, dequeue it
+            _commandQueue.Dequeue();
+        }
+    }
+    private void Update()
+    {
+        if (_commandQueue.Count >0)
+        {
+            Command currentCommand = _commandQueue.Peek();
+            bool completed = currentCommand.Execute(gameObject);
+            if (completed)
+            {
+                _commandQueue.Dequeue();
             }
         }
     }
+
+    // public void EnqueueCommand(Command command)
+    // {
+    //     _commandQueue.Enqueue(command);
+    // }
+    // public void ExecuteCommands()
+    // {
+    //     if (_commandQueue.Count >0)
+    //     {
+    //         Command command = _commandQueue.Peek();
+    //         if (command.IsCompleted())
+    //         {
+    //             _commandQueue.Dequeue();
+    //         }
+    //         else
+    //         {
+    //             command.Execute(gameObject);    
+    //         }
+    //     }
+    // }
 
     
 }

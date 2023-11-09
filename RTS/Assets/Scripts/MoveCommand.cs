@@ -21,7 +21,12 @@ public class MoveCommand : Command
 
     public override bool IsCompleted()
     {
-        return isCompleted;
+        if (Vector3.Distance(entityTransform.transform.position,destination)<0.3f)
+        {
+            return isCompleted;
+        }
+
+        return false;
     }
 
     public override bool Execute(GameObject entity)
@@ -46,7 +51,7 @@ public class MoveCommand : Command
 
     IEnumerator MoveToDestination()
     {
-        while (Vector3.Distance(entityTransform.position , destination)>0.1f)
+        while (Vector3.Distance(entityTransform.position , destination)>1f)
         {
             Vector3 direction = (destination - entityTransform.position).normalized;
             entityTransform.position += direction * speed * Time.deltaTime;

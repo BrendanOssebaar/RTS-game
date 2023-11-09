@@ -41,19 +41,40 @@ public class MouseInputHandler : MonoBehaviour
             if (hitInfo.HasValue)
             {
                 Debug.Log($"Issuing command to position {hitInfo.Value.point}");
-                IssueCommandToSelectedUnit(hitInfo.Value.point);   
+                commander.IssueCommand(hitInfo.Value.point);   
             }
         }
     }
 
-    private void IssueCommandToSelectedUnit(Vector3 destination)
-    {
-        if (_selectedUnit != null)
-        {
-            commander.IssueCommand(_selectedUnit,destination);
-        }
-    }
+    // private void IssueCommandToSelectedUnit(Vector3 destination)
+    // {
+    //     commander.IssueCommand(destination);
+    // }
+    // void SelectEntity()
+    // {
+    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //     RaycastHit hit;
+    //     if (Physics.Raycast(ray, out hit))
+    //     {
+    //         _selectedUnit = hit.collider.GetComponent<Unit>();
+    //         if (_selectedUnit != null)
+    //         {
+    //             Debug.Log("Entity Selected: " + _selectedUnit.gameObject.name);
+    //         }
+    //     }
+    // }
 
+    // void IssueCommand()
+    // {
+    //     if (_selectedUnit == null) return;
+    //
+    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //     RaycastHit hit;
+    //     if (Physics.Raycast(ray, out hit))
+    //     {
+    //         commander.IssueCommand(hit.point);
+    //     }
+    // }
     // void SelectEntity()
     // {
     //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

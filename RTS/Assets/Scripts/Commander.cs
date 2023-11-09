@@ -6,6 +6,8 @@ public class Commander : MonoBehaviour
 {
     private GameObject selectedEntity;
     private Command currentCommand;
+
+    private Unit Unit;
     // public List<ActionTypes.ActionCommandPair> actionCommandPairs;
     // private Dictionary<GameObject, ActionTypes.ActionCommandPair> actionDictionary;
 
@@ -37,29 +39,31 @@ public class Commander : MonoBehaviour
         selectedEntity = null;
     }
 
-    public void IssueCommand(Unit unit, Vector3 destination)
+    public void IssueCommand(Vector3 destination)
     {
-        // if (selectedEntity == null)
-        // {
-        //     Debug.LogWarning("No entity selected to issue command to.");
-        //     return;
-        // }
-        // Unit unit = selectedEntity.GetComponent<Unit>();
-        // if (unit == null)
-        // {
-        //     Debug.LogError("Selected entity does not have a Unit component.");
-        //     return;
-        // }
-        //
-        // if (currentCommand != null)
-        // {
-        //     currentCommand.Cancel();
-        // }
-
-        Command newMoveCommand = new MoveCommand(selectedEntity.transform, destination);
+        if (selectedEntity == null)
+        {
+            Debug.LogWarning("No entity selected to issue command to.");
+            return;
+        }
+        Unit unit = selectedEntity.GetComponent<Unit>();
+        if (unit == null)
+        {
+            Debug.LogError("Selected entity does not have a Unit component.");
+            return;
+        }
+        
+        if (currentCommand != null)
+        {
+            currentCommand.Cancel();
+            currentCommand = null;
+        }
+        
+        Command newMoveCommand = new MoveCommand(selectedEntity.transform,destination);
         unit.ExecuteCommand(newMoveCommand);
         currentCommand = newMoveCommand;
-    }
+
+        }
     
     // public void IssueCommand(Unit unit, Vector3 destination)
     // {

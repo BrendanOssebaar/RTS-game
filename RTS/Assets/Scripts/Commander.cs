@@ -4,50 +4,52 @@ using UnityEngine;
 
 public class Commander : MonoBehaviour
 {
+    public List<GameObject> selectedEntities = new List<GameObject>();
     private GameObject selectedEntity;
     private Command currentCommand;
+    private Command newMoveCommand;
+    private Unit _unit;
+    
 
-    private Unit Unit;
-    // public List<ActionTypes.ActionCommandPair> actionCommandPairs;
-    // private Dictionary<GameObject, ActionTypes.ActionCommandPair> actionDictionary;
-
-    // private void Start()
+    // public void SelectEntity(GameObject entity)
     // {
-    //     actionDictionary = new Dictionary<GameObject, ActionTypes.ActionCommandPair>();
-    //     foreach (var pair in actionCommandPairs)
+    //     if (entity.GetComponent<Unit>() != null)
     //     {
-    //         actionDictionary.Add(pair.Command.Target, pair);
+    //         if (selectedEntity != null)
+    //         {
+    //             DeselectEntity();
+    //         }
+    //         selectedEntities.Add(gameObject);
+    //         Debug.Log("Entity Selected: " + entity.name);
     //     }
     // }
-
-    public void SelectEntity(GameObject entity)
+    public void addToSelection(GameObject obj)
     {
-        if (entity.GetComponent<Unit>() != null)
+        if (!selectedEntities.Contains(obj))
         {
-            if (selectedEntity != null)
-            {
-                DeselectEntity();
-            }
-            selectedEntity = entity;
-            Debug.Log("Entity Selected: " + entity.name);
+            selectedEntities.Add(obj);
         }
     }
     private void DeselectEntity()
     {
-        // You may want to add logic here to clean up or reset the state when an entity is deselected
         Debug.Log("Entity Deselected: " + selectedEntity.name);
-        selectedEntity = null;
+        selectedEntities.Clear();
     }
 
     public void IssueCommand(Vector3 destination)
     {
-        if (selectedEntity == null)
+        if (selectedEntities.Count <= 1)
         {
             Debug.LogWarning("No entity selected to issue command to.");
             return;
         }
-        Unit unit = selectedEntity.GetComponent<Unit>();
-        if (unit == null)
+
+        foreach (var VARIABLE in selectedEntities)
+        {
+            _unit = GetComponent<Unit>();
+        }
+        
+        if (_unit == null)
         {
             Debug.LogError("Selected entity does not have a Unit component.");
             return;
@@ -58,9 +60,13 @@ public class Commander : MonoBehaviour
             currentCommand.Cancel();
             currentCommand = null;
         }
+
+        foreach (var VARIABLE in selectedEntities)
+        {
+            newMoveCommand = new MoveCommand(VARIABLE.transform,destination);
+        }
         
-        Command newMoveCommand = new MoveCommand(selectedEntity.transform,destination);
-        unit.ExecuteCommand(newMoveCommand);
+        _unit.ExecuteCommand(newMoveCommand);
         currentCommand = newMoveCommand;
 
         }

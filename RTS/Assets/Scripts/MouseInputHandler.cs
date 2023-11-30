@@ -31,7 +31,7 @@ public class MouseInputHandler : MonoBehaviour
             var hitInfo = CalculateRaycast();
             if (hitInfo.HasValue)
             {
-                commander.SelectEntity(hitInfo.Value.collider.gameObject);
+                commander.addToSelection(hitInfo.Value.collider.gameObject);
             }
         }
         if (Input.GetMouseButtonDown(1))

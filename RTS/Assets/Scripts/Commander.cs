@@ -30,7 +30,7 @@ public class Commander : MonoBehaviour
             selectedEntities.Add(obj);
         }
     }
-    private void DeselectEntity()
+    public void DeselectEntity()
     {
         Debug.Log("Entity Deselected: " + selectedEntity.name);
         selectedEntities.Clear();
@@ -44,9 +44,9 @@ public class Commander : MonoBehaviour
             return;
         }
 
-        foreach (var VARIABLE in selectedEntities)
+        foreach (GameObject obj in selectedEntities)
         {
-            _unit = GetComponent<Unit>();
+            _unit = obj.GetComponent<Unit>();
         }
         
         if (_unit == null)

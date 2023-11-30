@@ -7,6 +7,7 @@ public class MouseInputHandler : MonoBehaviour
 {
     [SerializeField] private Commander commander;
     private Unit _selectedUnit;
+    public Array[] excludedLayers;
 
     private RaycastHit? CalculateRaycast()
     {
@@ -29,6 +30,11 @@ public class MouseInputHandler : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             var hitInfo = CalculateRaycast();
+            if (hitInfo.Value.collider.isTrigger)
+            {
+                Debug.Log("Did not Hit Anything, deselecting");
+                commander.DeselectEntity();
+            }
             if (hitInfo.HasValue)
             {
                 commander.addToSelection(hitInfo.Value.collider.gameObject);
@@ -37,6 +43,11 @@ public class MouseInputHandler : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             Debug.Log("Right-click detected");
+            if (commander.selectedEntities.Count < 1)
+            {
+                Debug.Log("No units selected");
+                return;
+            }
             var hitInfo = CalculateRaycast();
             if (hitInfo.HasValue)
             {

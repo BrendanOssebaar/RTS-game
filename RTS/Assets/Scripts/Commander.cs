@@ -28,11 +28,18 @@ public class Commander : MonoBehaviour
         if (!selectedEntities.Contains(obj))
         {
             selectedEntities.Add(obj);
+            obj.GetComponent<Unit>().particleSystem.Play();
+            obj.GetComponent<Unit>().isSelected = true;
         }
+        
     }
     public void DeselectEntity()
     {
-        Debug.Log("Entity Deselected: " + selectedEntity.name);
+        Debug.Log("Entity Deselected: " + selectedEntities);
+        foreach (var obj in selectedEntities)
+        {
+            obj.GetComponent<Unit>().isSelected = false;
+        }
         selectedEntities.Clear();
     }
 

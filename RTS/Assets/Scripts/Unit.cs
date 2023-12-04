@@ -6,7 +6,8 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     private readonly Queue<Command> _commandQueue = new Queue<Command>();
-
+    public bool isSelected = false;
+    public ParticleSystem particleSystem;
     public void ExecuteCommand(Command command)
     {
         if (_commandQueue.Count > 0)

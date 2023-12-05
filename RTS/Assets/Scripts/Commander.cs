@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Commander : MonoBehaviour
 {
@@ -35,17 +36,33 @@ public class Commander : MonoBehaviour
     }
     public void DeselectEntity()
     {
+        // if (selectedEntities.Count == 0)return;
         Debug.Log("Entity Deselected: " + selectedEntities);
         foreach (var obj in selectedEntities)
         {
+            obj.GetComponent<Unit>().particleSystem.Stop();
             obj.GetComponent<Unit>().isSelected = false;
         }
         selectedEntities.Clear();
     }
 
+    public void selectedEntitiesInArea(Vector3 start, Vector3 end)
+    {
+        Bounds selectionBounds = new Bounds();
+        selectionBounds.SetMinMax(Vector3.Min(start,end),Vector3.Max(start,end));
+        Collider[] colliders = Physics.OverlapBox(selectionBounds.center, selectionBounds.extents);
+        foreach (var collider in colliders)
+        {
+            Unit unitComponent = collider.gameObject.GetComponent<Unit>();
+            if (unitComponent != null)
+            {
+                selectedEntities.Add(collider.gameObject);
+            }
+        }
+    }
     public void IssueCommand(Vector3 destination)
     {
-        if (selectedEntities.Count <= 1)
+        if (selectedEntities.Count < 1)
         {
             Debug.LogWarning("No entity selected to issue command to.");
             return;

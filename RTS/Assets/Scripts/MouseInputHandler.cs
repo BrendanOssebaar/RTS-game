@@ -8,6 +8,9 @@ public class MouseInputHandler : MonoBehaviour
     [SerializeField] private Commander commander;
     private Unit _selectedUnit;
     public Array[] excludedLayers;
+    private Camera _camera;
+    private Vector3 _startPosition;
+
 
     private RaycastHit? CalculateRaycast()
     {
@@ -25,20 +28,32 @@ public class MouseInputHandler : MonoBehaviour
         return null;
     }
 
+    private void Start()
+    {
+        _camera = Camera.main;
+    }
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
             var hitInfo = CalculateRaycast();
-            if (hitInfo.Value.collider.isTrigger)
+            if (!hitInfo.Value.collider.GetComponent<Unit>() && commander.selectedEntities.Count != 0)
             {
-                Debug.Log("Did not Hit Anything, deselecting");
+                // Debug.Log("Did not hit anything selectable, deselecting");
                 commander.DeselectEntity();
             }
-            if (hitInfo.HasValue)
+            if (hitInfo.Value.collider.GetComponent<Unit>())
             {
                 commander.addToSelection(hitInfo.Value.collider.gameObject);
             }
+
+            _startPosition = GetworldPosition(Input.mousePosition);
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            commander.selectedEntitiesInArea(_startPosition,GetworldPosition(Input.mousePosition));
         }
         if (Input.GetMouseButtonDown(1))
         {
@@ -55,6 +70,17 @@ public class MouseInputHandler : MonoBehaviour
                 commander.IssueCommand(hitInfo.Value.point);   
             }
         }
+    }
+
+    private Vector3 GetworldPosition(Vector2 screenPosition)
+    {
+        Ray ray = _camera.ScreenPointToRay(screenPosition);
+        if (new Plane(Vector3.up,Vector3.zero).Raycast(ray, out float enter))
+        {
+            return ray.GetPoint(enter);
+        }
+
+        return Vector3.zero;
     }
 
     // private void IssueCommandToSelectedUnit(Vector3 destination)

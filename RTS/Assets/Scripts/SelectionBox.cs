@@ -12,6 +12,12 @@ public class SelectionBox : MonoBehaviour
     private Vector2 _startPosition;
     private Rect _selectionRect;
     private Commander _commander;
+    private Camera _camera;
+
+    private void Start()
+    {
+        _camera = Camera.main;
+    }
 
     private void Awake()
     {
@@ -70,12 +76,15 @@ public class SelectionBox : MonoBehaviour
         {
             if (((1 << obj.layer) & selectableLayer) != 0)
             {
-                Vector3 screenPos = Camera.main.WorldToScreenPoint(obj.transform.position);
-                if (screenRect.Contains(screenPos, true))
+                if (_camera != null)
                 {
-                    foreach (GameObject gameobject in selectionBox)
+                    Vector3 screenPos = _camera.WorldToScreenPoint(obj.transform.position);
+                    if (screenRect.Contains(screenPos, true))
                     {
-                        _commander.addToSelection(gameobject);
+                        foreach (GameObject gobj in selectionBox)
+                        {
+                            _commander.addToSelection(gobj);
+                        }
                     }
                 }
             }
